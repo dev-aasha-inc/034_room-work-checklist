@@ -9,7 +9,11 @@ export interface Room {
   task: Task
   /** Kept in the data but not shown until the work is confirmed. */
   onHold?: boolean
+  /** Shown with a warning: the worker must check with the person in charge before starting. */
+  confirmFirst?: boolean
 }
+
+export const CONFIRM_FIRST_LABEL = '作業前に要確認'
 
 export const TASK_LABEL: Record<Task, string> = {
   bypass: 'バイパス',

@@ -1,5 +1,5 @@
 import type { Records } from '@/lib/records'
-import { type Room, suiteNumber } from '@/lib/rooms'
+import { CONFIRM_FIRST_LABEL, type Room, suiteNumber } from '@/lib/rooms'
 import { cn } from '@/lib/utils'
 
 interface FloorGridProps {
@@ -17,17 +17,19 @@ export function FloorGrid({ rooms, records, index, onSelect }: FloorGridProps) {
         {rooms.map((room, i) => {
           const suite = suiteNumber(room.room)
           const isDone = Boolean(records[room.room])
+          const needsConfirm = Boolean(room.confirmFirst) && !isDone
           return (
             <li key={room.room}>
               <button
                 type="button"
                 aria-current={i === index}
-                aria-label={`${suite} ${isDone ? '完了' : '未完了'}`}
+                aria-label={`${suite} ${isDone ? '完了' : '未完了'}${needsConfirm ? ` ${CONFIRM_FIRST_LABEL}` : ''}`}
                 onClick={() => onSelect(i)}
                 className={cn(
                   'flex h-16 w-full flex-col items-center justify-center rounded-xl border-2 text-lg leading-tight font-semibold tabular-nums transition-colors active:translate-y-px',
                   isDone && 'border-done bg-done-soft text-done',
                   !isDone && (room.task === 'gr' ? 'border-gr/30 bg-card text-gr' : 'border-foreground/10 bg-card'),
+                  needsConfirm && 'border-amber-500 bg-amber-50',
                   i === index && 'ring-2 ring-primary ring-offset-2 ring-offset-background',
                 )}
               >
@@ -41,6 +43,7 @@ export function FloorGrid({ rooms, records, index, onSelect }: FloorGridProps) {
       <p className="flex justify-center gap-4 text-sm text-muted-foreground">
         <span className="text-done">■ 完了</span>
         <span className="text-gr">紫の文字 = GR</span>
+        {rooms.some((room) => room.confirmFirst) && <span className="text-amber-700">黄色の枠 = 要確認</span>}
       </p>
     </div>
   )

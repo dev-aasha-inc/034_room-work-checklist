@@ -23,7 +23,7 @@
   {"floor": "33F", "room": 13323, "type": "S2", "task": "gr"},
   {"floor": "33F", "room": 3324, "type": "ST3", "task": "bypass"},
   {"floor": "34F", "room": 3401, "type": "ST3", "task": "bypass"},
-  {"floor": "34F", "room": 13402, "type": "S2", "task": "gr", "onHold": true},
+  {"floor": "34F", "room": 13402, "type": "S2", "task": "gr"},
   {"floor": "34F", "room": 3403, "type": "SK2", "task": "bypass"},
   {"floor": "34F", "room": 3404, "type": "SK2", "task": "bypass"},
   {"floor": "34F", "room": 3405, "type": "SK2", "task": "bypass"},
@@ -122,7 +122,7 @@
   {"floor": "39F", "room": 3922, "type": "SK2", "task": "bypass"},
   {"floor": "39F", "room": 13923, "type": "S1", "task": "gr"},
   {"floor": "39F", "room": 3924, "type": "ST3", "task": "bypass"},
-  {"floor": "40F", "room": 14001, "type": "PDS", "task": "gr", "onHold": true},
-  {"floor": "40F", "room": 24001, "type": "PDS", "task": "gr", "onHold": true},
-  {"floor": "40F", "room": 4002, "type": "STD", "task": "bypass"}
+  {"floor": "40F", "room": 14001, "type": "PDS", "task": "gr", "confirmFirst": true},
+  {"floor": "40F", "room": 24001, "type": "PDS", "task": "gr", "confirmFirst": true},
+  {"floor": "40F", "room": 4002, "type": "STD", "task": "bypass", "confirmFirst": true}
 ]

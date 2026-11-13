@@ -1,8 +1,8 @@
-import { Check } from 'lucide-react'
+import { Check, TriangleAlert } from 'lucide-react'
 import { useLayoutEffect, useRef } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { formatJst, type Records } from '@/lib/records'
-import { type Room, suiteNumber, TASK_LABEL, type Task } from '@/lib/rooms'
+import { CONFIRM_FIRST_LABEL, type Room, suiteNumber, TASK_LABEL, type Task } from '@/lib/rooms'
 import { cn } from '@/lib/utils'
 
 const TASK_BADGE: Record<Task, string> = {
@@ -25,6 +25,12 @@ function RoomCard({ room, doneAt }: RoomCardProps) {
       )}
     >
       <Badge className={cn('h-9 px-4 text-base', TASK_BADGE[room.task])}>{TASK_LABEL[room.task]}</Badge>
+      {room.confirmFirst && (
+        <p className="flex items-center gap-1.5 rounded-xl bg-amber-100 px-4 py-2 text-xl font-semibold text-amber-900">
+          <TriangleAlert className="size-6" aria-hidden="true" />
+          {CONFIRM_FIRST_LABEL}
+        </p>
+      )}
       <p className="text-[5.75rem] leading-none font-semibold tracking-tighter tabular-nums">{suite}</p>
       <p className="text-lg text-muted-foreground tabular-nums">
         {suite !== room.room && `（${room.room}）`} {room.type}

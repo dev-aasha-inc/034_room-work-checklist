@@ -1,17 +1,24 @@
 import { expect, test } from 'vitest'
-import { FLOORS, ROOMS, suiteNumber } from './rooms'
+import { ALL_ROOMS, FLOORS, ROOMS, suiteNumber } from './rooms'
 
-test('lists 96 bypass rooms and 27 grounding rooms', () => {
+test('lists 96 bypass rooms and 30 grounding rooms', () => {
   expect(ROOMS.filter((r) => r.task === 'bypass')).toHaveLength(96)
-  expect(ROOMS.filter((r) => r.task === 'gr')).toHaveLength(27)
+  expect(ROOMS.filter((r) => r.task === 'gr')).toHaveLength(30)
 })
 
 test('hides rooms that are on hold', () => {
-  const numbers = ROOMS.map((r) => r.room)
+  expect(ROOMS).toEqual(ALL_ROOMS.filter((r) => !r.onHold))
+})
 
-  expect(numbers).not.toContain(13402)
-  expect(numbers).not.toContain(14001)
-  expect(numbers).not.toContain(24001)
+test('includes the grounding room on 34F that was confirmed after the first release', () => {
+  expect(ROOMS.find((r) => r.room === 13402)).toMatchObject({ floor: '34F', task: 'gr' })
+})
+
+test('marks every room on 40F as needing confirmation before the work', () => {
+  const flagged = ROOMS.filter((r) => r.confirmFirst).map((r) => r.room)
+
+  expect(flagged).toEqual([14001, 24001, 4002])
+  expect(ROOMS.filter((r) => r.floor === '40F').map((r) => r.room)).toEqual(flagged)
 })
 
 test('lists floors from the lowest to the highest', () => {
