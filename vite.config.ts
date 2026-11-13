@@ -13,6 +13,7 @@ const CONTENT_SECURITY_POLICY = [
   "img-src 'self' data:",
   "object-src 'none'",
   "base-uri 'self'",
+  "form-action 'none'",
 ].join('; ')
 
 function cspMeta(): Plugin {

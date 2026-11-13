@@ -7,8 +7,9 @@ import { pushOps } from './sync'
 const STATE_KEY = 'rwc.state'
 const TOKEN_KEY = 'rwc.token'
 const RETRY_MS = 15_000
-// Statuses GitHub returns when the token is wrong, expired, or lacks access to the records repository.
-const REJECTED_STATUSES = [401, 403, 404]
+// Statuses GitHub returns when the token is wrong, expired, or cannot see the records repository.
+// 403 is left out on purpose: it is also used for temporary rate limits, so it is retried.
+const REJECTED_STATUSES = [401, 404]
 
 /**
  * local: no token on this device, records stay here only.

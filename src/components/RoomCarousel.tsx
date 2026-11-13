@@ -57,10 +57,15 @@ export function RoomCarousel({ rooms, records, index, onIndexChange }: RoomCarou
   useLayoutEffect(() => {
     const el = scroller.current
     if (!el) return
-    const animate = !isFirstRender.current && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const visible = Math.round(el.scrollLeft / el.clientWidth)
+    const isFirst = isFirstRender.current
     isFirstRender.current = false
-    if (Math.round(el.scrollLeft / el.clientWidth) === index) return
-    el.scrollTo({ left: index * el.clientWidth, behavior: animate ? 'smooth' : 'instant' })
+    if (visible === index) return
+    // Glide only to the room next door. A longer animated scroll would pass over other rooms,
+    // and the "done" button must never point at a room the worker is not looking at.
+    const glide =
+      !isFirst && Math.abs(index - visible) === 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollTo({ left: index * el.clientWidth, behavior: glide ? 'smooth' : 'instant' })
   }, [index])
 
   const handleScroll = () => {

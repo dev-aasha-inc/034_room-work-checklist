@@ -73,6 +73,15 @@ describe('serializeRecords / parseRecords', () => {
     })
   })
 
+  test('keeps records for rooms that are not in the room list', () => {
+    const withUnlisted = { ...records, 9999: '2026-11-13T11:00:00+09:00' }
+
+    const file = JSON.parse(serializeRecords(withUnlisted, ROOMS, '2026-11-13T11:00:01+09:00'))
+
+    expect(file.records).toHaveLength(3)
+    expect(file.records.at(-1)).toEqual({ room: 9999, doneAt: '2026-11-13T11:00:00+09:00' })
+  })
+
   test('reads back what it wrote', () => {
     const text = serializeRecords(records, ROOMS, '2026-11-13T10:05:01+09:00')
 

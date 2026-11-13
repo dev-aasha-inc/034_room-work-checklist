@@ -10,7 +10,7 @@ import {
   TriangleAlert,
   Undo2,
 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FloorGrid } from '@/components/FloorGrid'
 import { RoomCarousel } from '@/components/RoomCarousel'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,8 @@ import { cn } from '@/lib/utils'
 
 // After a room is completed, show the result briefly, then slide to the next open room.
 const ADVANCE_DELAY_MS = 350
-// Taps are ignored while the view is sliding, so a double tap cannot complete the next room too.
+// Taps are ignored right after completing or undoing, so a double tap cannot act on the same room
+// twice or on the room the view is sliding to.
 const TAP_LOCK_MS = 900
 const UNDO_CONFIRM_MS = 5000
 
@@ -96,11 +97,12 @@ interface FloorViewProps {
 }
 
 function FloorView({ floor, records, mark }: FloorViewProps) {
-  const rooms = useMemo(() => roomsOn(floor), [floor])
+  const rooms = roomsOn(floor)
   const [index, setIndex] = useState(() => Math.max(0, rooms.findIndex((room) => !records[room.room])))
   const [showGrid, setShowGrid] = useState(false)
   const [isConfirmingUndo, setIsConfirmingUndo] = useState(false)
   const lockedUntil = useRef(0)
+  const advanceTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const current = rooms[index]
   const isDone = Boolean(records[current.room])
@@ -114,7 +116,11 @@ function FloorView({ floor, records, mark }: FloorViewProps) {
     return () => clearTimeout(timer)
   }, [isConfirmingUndo])
 
+  useEffect(() => () => clearTimeout(advanceTimer.current), [])
+
   const goTo = (i: number) => {
+    // Moving by hand cancels a pending auto-advance, so the view is never pulled back.
+    clearTimeout(advanceTimer.current)
     setIndex(i)
     setIsConfirmingUndo(false)
   }
@@ -126,7 +132,7 @@ function FloorView({ floor, records, mark }: FloorViewProps) {
     lockedUntil.current = Date.now() + TAP_LOCK_MS
     mark(current.room, true)
     const target = nextOpenIndex(rooms, records, index)
-    if (target !== -1) setTimeout(() => goTo(target), ADVANCE_DELAY_MS)
+    if (target !== -1) advanceTimer.current = setTimeout(() => goTo(target), ADVANCE_DELAY_MS)
   }
 
   const undo = () => {
@@ -135,6 +141,8 @@ function FloorView({ floor, records, mark }: FloorViewProps) {
       setIsConfirmingUndo(true)
       return
     }
+    // The big button turns back into "done" in the same spot; a third tap must not re-complete the room.
+    lockedUntil.current = Date.now() + TAP_LOCK_MS
     mark(current.room, false)
     setIsConfirmingUndo(false)
   }

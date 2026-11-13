@@ -30,10 +30,16 @@ export function formatJst(iso: string): string {
 }
 
 export function serializeRecords(records: Records, rooms: Room[], updatedAt: string): string {
-  const list = rooms
+  const listed = rooms
     .filter(({ room }) => records[room])
     .map(({ room, task }) => ({ room, task, doneAt: records[room] }))
-  return `${JSON.stringify({ updatedAt, records: list }, null, 2)}\n`
+  // A record for a room that is no longer in the list is kept, never dropped.
+  const listedNumbers = new Set(rooms.map(({ room }) => room))
+  const unlisted = Object.keys(records)
+    .map(Number)
+    .filter((room) => !listedNumbers.has(room))
+    .map((room) => ({ room, doneAt: records[room] }))
+  return `${JSON.stringify({ updatedAt, records: [...listed, ...unlisted] }, null, 2)}\n`
 }
 
 /** Throws on anything unexpected: treating a broken file as empty would overwrite real records. */
