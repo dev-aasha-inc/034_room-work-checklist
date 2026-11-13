@@ -20,3 +20,7 @@ build/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local env / logs
+*.local
+*.log

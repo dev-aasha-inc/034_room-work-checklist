@@ -1,3 +1,44 @@
 # 034_room-work-checklist
 
-Mobile checklist for per-room field work with completion timestamps
+客室ごとの現場作業（バイパス設置・GR（アース）設置）を、スマホで1部屋ずつ消し込むためのチェックリストです。
+完了にした日時を秒単位（日本時間）で記録します。
+
+## 使い方（現場）
+
+1. 管理者から受け取った「現場用リンク」をスマホで開く（最初の1回だけ）。
+2. 上の階ボタンで階を選ぶ。
+3. 左右にスワイプして部屋を移動し、作業が終わったら「完了にする」を押す。次の未完了の部屋に自動で進みます。
+4. 押し間違えたら、その部屋で「取り消す」を2回押す。
+
+電波が届かない場所でも記録はスマホに残り、つながったときに自動で送信されます。
+
+## 使い方（管理者）
+
+1. 記録用リポジトリ `room-work-records`（非公開）にだけ書き込める fine-grained personal access token を作る。
+   - Repository access: `room-work-records` のみ
+   - Permissions: Contents = Read and write
+   - 有効期限は作業期間に合わせて短くする
+2. このアプリの URL の末尾に `#setup` を付けて開き、トークンを貼って「鍵を確認する」を押す。
+3. 表示された「現場用リンクをコピー」で得たリンクを、作業する人にだけ送る。
+4. 作業が終わったら GitHub でトークンを削除する。
+
+## 記録
+
+- 保存先: 記録用リポジトリの `records.json`（部屋番号・作業種別・完了日時）。変更のたびに 1 コミットになり、取り消しも履歴に残ります。
+- トークンは現場のスマホのブラウザ内にだけ保存され、GitHub API 以外には送信されません。
+- 個人情報は扱いません。
+
+## 対象の部屋
+
+`src/data/rooms.json` が対象リストです。`"onHold": true` の行は画面に出ません。対象に加えるときはその指定を外します。
+
+## 開発
+
+```bash
+npm install
+npm run dev
+npm test
+npm run build
+```
+
+`main` に push すると GitHub Actions がテスト・ビルドして GitHub Pages に公開します。
